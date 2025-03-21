@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, where } from "firebase/firestore";
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, where, doc, updateDoc  } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 // ✅ Initialize Firebase
@@ -17,7 +17,7 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 
 // ✅ Add a new task
-export const addTask = async (projectId, title, dueDate = null) => {
+export const addTask = async (projectId, title, dueDate) => {
   try {
     const docRef = await addDoc(collection(db, "tasks"), {
       projectId,
@@ -62,5 +62,18 @@ export const getTasksForProject = async (projectId) => {
   } catch (error) {
     console.error("Error fetching tasks:", error);
     return [];
+  }
+};
+
+// ✅ Update Task Status
+export const updateTaskStatus = async (taskId, newStatus) => {
+  try {
+    const taskRef = doc(db, "tasks", taskId);
+    await updateDoc(taskRef, {
+      status: newStatus,
+    });
+    console.log(`Task ${taskId} status updated to ${newStatus}`);
+  } catch (error) {
+    console.error("Error updating task status:", error);
   }
 };

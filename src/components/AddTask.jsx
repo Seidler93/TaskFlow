@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { addTask } from "../../firebase";
 
-export default function AddTask({ projectId }) {
+export default function AddTask({ projectId, date }) {
   const [title, setTitle] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return;
 
-    await addTask(projectId, title);
+    await addTask(projectId, title, date);
     setTitle(""); // Clear input after adding task
   };
 

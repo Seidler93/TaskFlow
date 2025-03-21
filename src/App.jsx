@@ -7,37 +7,44 @@ import TaskList from "./components/TaskList";
 export default function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedProjectName, setSelectedProjectName] = useState("");
+  const [taskView, setTaskView] = useState('day');
 
   const handleProjectSelect = (projectId, projectName) => {
     setSelectedProject(projectId);
     setSelectedProjectName(projectName);
   };
 
+ 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-200 p-4">
-      <h1 className="text-3xl font-bold mb-4">Task Manager</h1>
+    <div className="app-container" style={{ display: "flex", height: "100vh" }}>
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <h2>Projects</h2>
+        <AddProject onProjectAdded={(id) => setSelectedProject(id)} />
+        <ProjectList onSelectProject={handleProjectSelect} />
+      </aside>
 
-      {/* Add Project Button */}
-      <AddProject onProjectAdded={(id) => setSelectedProject(id)} />
+      {/* Main Content */}
+      <main className="main-content">
+        <h2 className="project-title">{selectedProjectName}</h2>
 
-      {/* Project List */}
-      <ProjectList onSelectProject={handleProjectSelect} />
+        {selectedProject ? (
+          <div className="task-container">
 
-      {/* Show Selected Project */}
-      {selectedProject && (
-        <div className="mt-4 p-4 bg-white shadow-md rounded-md w-full max-w-md">
-          <h2 className="text-lg font-semibold">Selected Project:</h2>
-          <p className="text-blue-500 font-medium">{selectedProjectName}</p>
-        </div>
-      )}
-
-      {/* Show Add Task & Task List if a project is selected */}
-      {selectedProject && (
-        <div className="mt-4 w-full max-w-md">
-          <AddTask projectId={selectedProject} />
-          <TaskList projectId={selectedProject} />
-        </div>
-      )}
+            {/* Task List Section */}
+            <TaskList projectId={selectedProject} taskView={"week"}/>
+            
+            {/* New Task Input Section */}
+            {/* <div className="task-input-container">
+              <AddTask projectId={selectedProject} />
+            </div> */}
+          </div>
+        ) : (
+          <p style={{ textAlign: "center", marginTop: "20px", color: "#666" }}>
+            Select a project to see tasks.
+          </p>
+        )}
+      </main>
     </div>
   );
 }
