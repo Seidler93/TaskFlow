@@ -8,10 +8,19 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedProjectName, setSelectedProjectName] = useState("");
   const [taskView, setTaskView] = useState('day');
+  const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, +1 = next week, -1 = last week
 
   const handleProjectSelect = (projectId, projectName) => {
     setSelectedProject(projectId);
     setSelectedProjectName(projectName);
+  };
+
+  const handlePrevWeek = () => {
+    setWeekOffset((prev) => prev - 1);
+  };
+
+  const handleNextWeek = () => {
+    setWeekOffset((prev) => prev + 1);
   };
 
  
@@ -28,11 +37,20 @@ export default function App() {
       <main className="main-content">
         <h2 className="project-title">{selectedProjectName}</h2>
 
+        {/* Week Navigation Buttons */}
+        {selectedProject && (
+          <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginBottom: "10px" }}>
+            <button onClick={handlePrevWeek}>← Previous Week</button>
+            <span>Week Offset: {weekOffset}</span>
+            <button onClick={handleNextWeek}>Next Week →</button>
+          </div>
+        )}
+
         {selectedProject ? (
           <div className="task-container">
 
             {/* Task List Section */}
-            <TaskList projectId={selectedProject} taskView={"week"}/>
+            <TaskList projectId={selectedProject} taskView={"week"} weekOffset={weekOffset}/>
             
             {/* New Task Input Section */}
             {/* <div className="task-input-container">

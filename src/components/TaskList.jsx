@@ -7,13 +7,12 @@ import { db, addTask } from "../../firebase";
 import { collection, query, where, onSnapshot, updateDoc, doc, orderBy, deleteDoc } from "firebase/firestore";
 
 // Helper function to get days of the current week
-const getWeekDays = () => {
+const getWeekDays = (offset = 0) => {
   const today = new Date();
-  const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay())); // Sunday
+  const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + offset * 7)); // Sunday adjusted
   return Array.from({ length: 7 }, (_, i) => {
     const day = new Date(startOfWeek);
     day.setDate(startOfWeek.getDate() + i);
-    // console.log(day.setDate(startOfWeek.getDate() + i));
     return day;
   });
 };
@@ -46,9 +45,7 @@ const formatDate = (date) => {
   return `${month} ${day}, ${year}`;
 };
 
-
-
-export default function TaskList({ projectId, taskView, refreshTrigger }) {
+export default function TaskList({ projectId, taskView, refreshTrigger, weekOffset = 0  }) {
   const [tasks, setTasks] = useState([]);
   const [openMenu, setOpenMenu] = useState(null);
 
@@ -135,46 +132,42 @@ export default function TaskList({ projectId, taskView, refreshTrigger }) {
 
       {taskView === "week" && (
         <div className="week-view">
-          {getWeekDays().map((day) => (
+          {getWeekDays(weekOffset).map((day) => (
             <div key={day.toDateString()} className="week-day">
               <h3>{day.toDateString()}</h3>
               {getTasksForDate(day).length > 0 ? (
                 getTasksForDate(day).map((task) => (
-                  <>
-                    <div key={task.id} className="task-card">
-                      <div className="task-header">
-                        <div className="task-status">
-                          &nbsp;
-                          <input
-                            type="checkbox"
-                            checked={task.status === "completed"}
-                            onChange={() => toggleTaskStatus(task.id, task.status)}
-                          />
-                        </div>
-                        <span className={task.status === "completed" ? "completed-task" : ""}>
-                          {task.title}
-                        </span>
+                  <div key={task.id} className="task-card">
+                    <div className="task-header">
+                      <div className="task-status">
+                        &nbsp;
+                        <input
+                          type="checkbox"
+                          checked={task.status === "completed"}
+                          onChange={() => toggleTaskStatus(task.id, task.status)}
+                        />
+                      </div>
+                      <span className={task.status === "completed" ? "completed-task" : ""}>
+                        {task.title}
+                      </span>
 
-                        {/* Three-dot menu */}
-                        <div className="menu-container">
-                          <button className="menu-button" onClick={() => toggleMenu(task.id)}>⋮</button>
-                          {openMenu === task.id && (
-                            <div className="menu-dropdown">
-                              <button onClick={() => console.log("Edit Task:", task.id)}>✏️ Edit</button>
-                              <button onClick={() => deleteTask(task.id)}>🗑 Delete</button>
-                            </div>
-                          )}
-                        </div>
+                      {/* Three-dot menu */}
+                      <div className="menu-container">
+                        <button className="menu-button" onClick={() => toggleMenu(task.id)}>⋮</button>
+                        {openMenu === task.id && (
+                          <div className="menu-dropdown">
+                            <button onClick={() => console.log("Edit Task:", task.id)}>✏️ Edit</button>
+                            <button onClick={() => deleteTask(task.id)}>🗑 Delete</button>
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </>
+                  </div>
                 ))
               ) : (
-                <>
-                  <p className="no-task">No tasks</p>
-                </>
+                <p className="no-task">No tasks</p>
               )}
-              <AddTask projectId={projectId} date={day}/>
+              <AddTask projectId={projectId} date={day} />
             </div>
           ))}
         </div>
