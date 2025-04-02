@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, where, doc, updateDoc  } from "firebase/firestore";
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, where, doc, updateDoc, deleteDoc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 // ✅ Initialize Firebase
@@ -17,15 +17,21 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 
 // ✅ Add a new task
-export const addTask = async (projectId, title, dueDate) => {
+export const addTask = async (projectId, title, dueDate, recurrence = null) => {
   try {
-    const docRef = await addDoc(collection(db, "tasks"), {
+    const taskData = {
       projectId,
       title,
       dueDate,
       status: "pending",
       createdAt: serverTimestamp(),
-    });
+    };
+
+    if (recurrence) {
+      taskData.recurrence = recurrence;
+    }
+
+    const docRef = await addDoc(collection(db, "tasks"), taskData);
     console.log("Task added with ID:", docRef.id);
     return docRef.id;
   } catch (error) {
@@ -75,5 +81,31 @@ export const updateTaskStatus = async (taskId, newStatus) => {
     console.log(`Task ${taskId} status updated to ${newStatus}`);
   } catch (error) {
     console.error("Error updating task status:", error);
+  }
+};
+
+// ✅ For recurring task (toggle for specific date)
+export const toggleRecurringTaskForDate = async (taskId, date, isCompleted) => {
+  try {
+    const taskRef = doc(db, "tasks", taskId);
+    const dateString = date.toISOString().split("T")[0]; // Example: "2025-04-01"
+
+    await updateDoc(taskRef, {
+      completedDates: isCompleted
+        ? arrayRemove(dateString)
+        : arrayUnion(dateString),
+    });
+    console.log(`Recurring task ${taskId} toggled for ${dateString}`);
+  } catch (error) {
+    console.error("Error toggling recurring task:", error);
+  }
+};
+
+export const deleteTask = async (taskId) => {
+  try {
+    await deleteDoc(doc(db, "tasks", taskId));
+    console.log(`Task ${taskId} deleted`);
+  } catch (error) {
+    console.error("Error deleting task:", error);
   }
 };

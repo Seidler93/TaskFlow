@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { getTasksForProject } from "../../firebase";
 import { data } from "autoprefixer";
 import AddTask from "./AddTask";
-import { updateTaskStatus } from "../../firebase";
-import { db, addTask } from "../../firebase";
-import { collection, query, where, onSnapshot, updateDoc, doc, orderBy, deleteDoc } from "firebase/firestore";
+import { updateTaskStatus, deleteTask, toggleRecurringTaskForDate, db } from "../../firebase";
+import { collection, query, where, onSnapshot, updateDoc, doc, orderBy } from "firebase/firestore";
 import { useRef } from "react";
 
 // Helper function to get days of the current week
@@ -123,27 +122,64 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
     updateTaskStatus(taskId, currentStatus === "pending" ? "completed" : "pending");    
   };
 
-  const deleteTask = async (taskId) => {
-    await deleteDoc(doc(db, "tasks", taskId));
-  };
-
   // Show task options menu
   const toggleMenu = (taskId) => {
     setOpenMenu(openMenu === taskId ? null : taskId);
   };
 
   // Filter tasks by day
+  // const getTasksForDate = (date) => {
+  //   return tasks.filter((task) => {
+  //     if (task.recurrence) {
+  //       const taskDate = new Date(task.dueDate.seconds * 1000);
+  //       if (task.recurrence.frequency === "daily") return true;
+  //       if (task.recurrence.frequency === "weekly")
+  //         return taskDate.getDay() === date.getDay();
+  //       if (task.recurrence.frequency === "monthly")
+  //         return taskDate.getDate() === date.getDate();
+  //     }
+  //     if (!task.dueDate) return false;
+  //     const taskDueDate = getMonthDayYear(task.dueDate);
+  //     const formattedDate = formatDate(date);
+  //     return taskDueDate === formattedDate;
+  //   });
+  // };
+
   const getTasksForDate = (date) => {
-    return tasks.filter((task) => {
-      if (!task.dueDate) return false;
-      const taskDueDate = getMonthDayYear(task.dueDate);
-      const fromattedDate = formatDate(date);
-
-      console.log(fromattedDate, taskDueDate);
-
-      return taskDueDate === fromattedDate;
-    });
+    return tasks
+      .map((task) => {
+        const formattedDate = formatDate(date);
+        const taskDueDate = task.dueDate ? getMonthDayYear(task.dueDate) : null;
+        const dateString = date.toISOString().split("T")[0]; // "2025-04-01"
+  
+        if (task.recurrence) {
+          let shouldInclude = false;
+          const taskDate = new Date(task.dueDate.seconds * 1000);
+  
+          if (task.recurrence.frequency === "daily") {
+            shouldInclude = true;
+          } else if (task.recurrence.frequency === "weekly") {
+            shouldInclude = taskDate.getDay() === date.getDay();
+          } else if (task.recurrence.frequency === "monthly") {
+            shouldInclude = taskDate.getDate() === date.getDate();
+          }
+  
+          if (shouldInclude) {
+            return {
+              ...task,
+              isCompleted: task.completedDates?.includes(dateString) || false,
+            };
+          }
+        } else if (taskDueDate === formattedDate) {
+          return { ...task, isCompleted: task.status === "completed" };
+        }
+  
+        return null;
+      })
+      .filter(Boolean);
   };
+  
+  
 
   return (
     <div className="task-list">
@@ -185,10 +221,21 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
                     <div className="task-header">
                       <div className="task-status">
                         &nbsp;
-                        <input
+                        {/* <input
                           type="checkbox"
                           checked={task.status === "completed"}
                           onChange={() => toggleTaskStatus(task.id, task.status)}
+                        /> */}
+                        <input
+                          type="checkbox"
+                          checked={task.isCompleted}
+                          onChange={() => {
+                            if (task.recurrence) {
+                              toggleRecurringTaskForDate(task.id, day, task.isCompleted);
+                            } else {
+                              toggleTaskStatus(task.id, task.status);
+                            }
+                          }}
                         />
                       </div>
                       {editingTaskId === task.id ? (
@@ -215,7 +262,14 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
                         {openMenu === task.id && (
                           <div className="menu-dropdown" ref={menuRef}>
                             <button onClick={() => handleEditTask(task)}>✏️ Edit</button>
-                            <button onClick={() => deleteTask(task.id)}>🗑 Delete</button>
+                            <button
+                              onClick={async () => {
+                                await deleteTask(task.id);
+                                setTasks((prev) => prev.filter((t) => t.id !== task.id));
+                              }}
+                            >
+                              🗑 Delete
+                            </button>
                           </div>
                         )}
                       </div>

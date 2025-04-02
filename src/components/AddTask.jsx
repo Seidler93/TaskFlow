@@ -4,11 +4,12 @@ import { addTask } from "../../firebase";
 export default function AddTask({ projectId, date }) {
   const [title, setTitle] = useState("");
   const [isAdding, setIsAdding] = useState(false);
+  const [recurrence, setRecurrence] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-    await addTask(projectId, title, date);
+    await addTask(projectId, title, date, recurrence ? { frequency: recurrence, interval: 1 } : null);
     setTitle("");
     setIsAdding(false);
   };
@@ -32,11 +33,18 @@ export default function AddTask({ projectId, date }) {
             autoFocus
             onChange={(e) => setTitle(e.target.value)}
           />
+          <select
+            className="border p-2 rounded"
+            value={recurrence}
+            onChange={(e) => setRecurrence(e.target.value)}
+          >
+            <option value="">Does not repeat</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
           <div className="flex gap-2">
-            <button
-              type="submit"
-              className="px-4 py-1 bg-blue-500 text-white rounded"
-            >
+            <button type="submit" className="px-4 py-1 bg-blue-500 text-white rounded">
               Add
             </button>
             <button
