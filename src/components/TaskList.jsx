@@ -5,6 +5,7 @@ import AddTask from "./AddTask";
 import { updateTaskStatus } from "../../firebase";
 import { db, addTask } from "../../firebase";
 import { collection, query, where, onSnapshot, updateDoc, doc, orderBy, deleteDoc } from "firebase/firestore";
+import { useRef } from "react";
 
 // Helper function to get days of the current week
 const getWeekDays = (offset = 0) => {
@@ -48,7 +49,50 @@ const formatDate = (date) => {
 export default function TaskList({ projectId, taskView, refreshTrigger, weekOffset = 0  }) {
   const [tasks, setTasks] = useState([]);
   const [openMenu, setOpenMenu] = useState(null);
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [editedTitle, setEditedTitle] = useState("");
+  const menuRef = useRef(null);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenMenu(null); // Close the menu
+      }
+    };
+  
+    document.addEventListener("mousedown", handleClickOutside);
+  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleEditTask = (task) => {
+    setEditingTaskId(task.id);
+    setEditedTitle(task.title);
+  };
+  
+  const handleSaveTask = async (taskId) => {
+    if (!editedTitle.trim()) return;
+  
+    const taskRef = doc(db, "tasks", taskId);
+    await updateDoc(taskRef, { title: editedTitle });
+  
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, title: editedTitle } : task
+      )
+    );
+  
+    setEditingTaskId(null);
+    setEditedTitle("");
+  };
+  
+  const handleCancelEdit = () => {
+    setEditingTaskId(null);
+    setEditedTitle("");
+  };
+ 
   useEffect(() => {
     if (!projectId) return;
 
@@ -147,16 +191,30 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
                           onChange={() => toggleTaskStatus(task.id, task.status)}
                         />
                       </div>
-                      <span className={task.status === "completed" ? "completed-task" : ""}>
-                        {task.title}
-                      </span>
+                      {editingTaskId === task.id ? (
+                        <input
+                          type="text"
+                          value={editedTitle}
+                          onChange={(e) => setEditedTitle(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSaveTask(task.id);
+                            if (e.key === "Escape") handleCancelEdit();
+                          }}
+                          autoFocus
+                          className="border rounded p-1 w-full"
+                        />
+                      ) : (
+                        <span className={task.status === "completed" ? "completed-task" : ""}>
+                          {task.title}
+                        </span>
+                      )}
 
                       {/* Three-dot menu */}
                       <div className="menu-container">
                         <button className="menu-button" onClick={() => toggleMenu(task.id)}>⋮</button>
                         {openMenu === task.id && (
-                          <div className="menu-dropdown">
-                            <button onClick={() => console.log("Edit Task:", task.id)}>✏️ Edit</button>
+                          <div className="menu-dropdown" ref={menuRef}>
+                            <button onClick={() => handleEditTask(task)}>✏️ Edit</button>
                             <button onClick={() => deleteTask(task.id)}>🗑 Delete</button>
                           </div>
                         )}

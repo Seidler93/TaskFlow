@@ -242,7 +242,8 @@ html, body, #root {
   position: absolute;
   width: 100px;
   margin: 0;
-  margin-top: 1rem;
+  margin-top: .5rem;
+  margin-left: 1.5rem;
   left: 0;
   top: 100%;
   background: #333;
@@ -288,6 +289,7 @@ html, body, #root {
 
 .add-task span {
   color: white;
+  margin-right: 6px;
 }
 
 .add-task:hover {
