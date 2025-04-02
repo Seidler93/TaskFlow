@@ -5,13 +5,15 @@ export default function AddTask({ projectId, date }) {
   const [title, setTitle] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [recurrence, setRecurrence] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-    await addTask(projectId, title, date, recurrence ? { frequency: recurrence, interval: 1 } : null);
+    await addTask(projectId, title, date, recurrence ? { frequency: recurrence, interval: 1 } : null, description);
     setTitle("");
     setIsAdding(false);
+    setDescription("");
   };
 
   return (
@@ -33,6 +35,12 @@ export default function AddTask({ projectId, date }) {
             autoFocus
             onChange={(e) => setTitle(e.target.value)}
           />
+          <textarea
+            className="border p-2 rounded w-full"
+            placeholder="Add a note or description (optional)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
           <select
             className="border p-2 rounded"
             value={recurrence}
@@ -52,6 +60,7 @@ export default function AddTask({ projectId, date }) {
               onClick={() => {
                 setTitle("");
                 setIsAdding(false);
+                setDescription("");
               }}
               className="px-4 py-1 bg-gray-300 rounded"
             >

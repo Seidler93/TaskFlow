@@ -17,7 +17,7 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 
 // ✅ Add a new task
-export const addTask = async (projectId, title, dueDate, recurrence = null) => {
+export const addTask = async (projectId, title, dueDate, recurrence = null, description = "") => {
   try {
     const taskData = {
       projectId,
@@ -25,6 +25,7 @@ export const addTask = async (projectId, title, dueDate, recurrence = null) => {
       dueDate,
       status: "pending",
       createdAt: serverTimestamp(),
+      description,
     };
 
     if (recurrence) {

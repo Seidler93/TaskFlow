@@ -52,6 +52,15 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
   const [editedTitle, setEditedTitle] = useState("");
   const menuRef = useRef(null);
   const [hideCompleted, setHideCompleted] = useState(false);
+  const [hiddenDescriptions, setHiddenDescriptions] = useState([]);
+
+  const toggleDescription = (taskId) => {
+    setHiddenDescriptions((prev) =>
+      prev.includes(taskId)
+        ? prev.filter((id) => id !== taskId) // Remove from hidden → show it again
+        : [...prev, taskId] // Add to hidden → hide it
+    );
+  };   
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -208,17 +217,24 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
           {getWeekDays(weekOffset).map((day) => (
             <div key={day.toDateString()} className="week-day">
               <h3>{day.toDateString()}</h3>
+
               {getTasksForDate(day).length > 0 ? (
                 getTasksForDate(day).map((task) => (
-                  <div key={task.id} className="task-card">
+                  <div 
+                    key={task.id} 
+                    className="task-card" 
+                    onClick={(e) => {
+                      // Prevent toggling when clicking on checkbox or menu
+                      if (
+                        e.target.tagName !== "INPUT" &&
+                        !e.target.closest(".menu-container")
+                      ) {
+                        toggleDescription(task.id);
+                      }
+                    }}>
                     <div className="task-header">
                       <div className="task-status">
                         &nbsp;
-                        {/* <input
-                          type="checkbox"
-                          checked={task.status === "completed"}
-                          onChange={() => toggleTaskStatus(task.id, task.status)}
-                        /> */}
                         <input
                           type="checkbox"
                           checked={task.isCompleted}
@@ -231,6 +247,8 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
                           }}
                         />
                       </div>
+
+                      {/* Task title (editable) */}
                       {editingTaskId === task.id ? (
                         <input
                           type="text"
@@ -244,14 +262,19 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
                           className="border rounded p-1 w-full"
                         />
                       ) : (
-                        <span className={task.status === "completed" ? "completed-task" : ""}>
+                        <span
+                          className={task.isCompleted ? "completed-task" : ""}
+                          style={{ flex: 1 }}
+                        >
                           {task.title}
                         </span>
                       )}
 
                       {/* Three-dot menu */}
                       <div className="menu-container">
-                        <button className="menu-button" onClick={() => toggleMenu(task.id)}>⋮</button>
+                        <button className="menu-button" onClick={() => toggleMenu(task.id)}>
+                          ⋮
+                        </button>
                         {openMenu === task.id && (
                           <div className="menu-dropdown" ref={menuRef}>
                             <button onClick={() => handleEditTask(task)}>✏️ Edit</button>
@@ -267,16 +290,29 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
                         )}
                       </div>
                     </div>
+
+                    {/* Description */}
+                    {!hiddenDescriptions.includes(task.id) && task.description && (
+                      <p
+                        className={`task-description text-gray-500 text-sm mt-2 px-2 pb-2 ${
+                          task.isCompleted ? "completed-task" : ""
+                        }`}
+                      >
+                        {task.description}
+                      </p>
+                    )}
                   </div>
                 ))
               ) : (
                 <p className="no-task">No tasks</p>
               )}
+
               <AddTask projectId={projectId} date={day} />
             </div>
           ))}
         </div>
       )}
+
 
       {taskView === "month" && (
         <div className="month-view">
