@@ -51,6 +51,7 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editedTitle, setEditedTitle] = useState("");
   const menuRef = useRef(null);
+  const [hideCompleted, setHideCompleted] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -128,29 +129,12 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
   };
 
   // Filter tasks by day
-  // const getTasksForDate = (date) => {
-  //   return tasks.filter((task) => {
-  //     if (task.recurrence) {
-  //       const taskDate = new Date(task.dueDate.seconds * 1000);
-  //       if (task.recurrence.frequency === "daily") return true;
-  //       if (task.recurrence.frequency === "weekly")
-  //         return taskDate.getDay() === date.getDay();
-  //       if (task.recurrence.frequency === "monthly")
-  //         return taskDate.getDate() === date.getDate();
-  //     }
-  //     if (!task.dueDate) return false;
-  //     const taskDueDate = getMonthDayYear(task.dueDate);
-  //     const formattedDate = formatDate(date);
-  //     return taskDueDate === formattedDate;
-  //   });
-  // };
-
   const getTasksForDate = (date) => {
     return tasks
       .map((task) => {
         const formattedDate = formatDate(date);
         const taskDueDate = task.dueDate ? getMonthDayYear(task.dueDate) : null;
-        const dateString = date.toISOString().split("T")[0]; // "2025-04-01"
+        const dateString = date.toISOString().split("T")[0];
   
         if (task.recurrence) {
           let shouldInclude = false;
@@ -165,13 +149,14 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
           }
   
           if (shouldInclude) {
-            return {
-              ...task,
-              isCompleted: task.completedDates?.includes(dateString) || false,
-            };
+            const isCompleted = task.completedDates?.includes(dateString) || false;
+            if (hideCompleted && isCompleted) return null;
+            return { ...task, isCompleted };
           }
         } else if (taskDueDate === formattedDate) {
-          return { ...task, isCompleted: task.status === "completed" };
+          const isCompleted = task.status === "completed";
+          if (hideCompleted && isCompleted) return null;
+          return { ...task, isCompleted };
         }
   
         return null;
@@ -179,10 +164,18 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
       .filter(Boolean);
   };
   
-  
-
   return (
     <div className="task-list">
+      <div className="flex items-center gap-2 mb-2">
+      <input
+        type="checkbox"
+        id="hideCompleted"
+        checked={hideCompleted}
+        onChange={() => setHideCompleted(!hideCompleted)}
+      />
+      <label htmlFor="hideCompleted">Hide Completed Tasks</label>
+    </div>
+
       {taskView === "day" && (
         <div>
           {tasks.length === 0 ? (

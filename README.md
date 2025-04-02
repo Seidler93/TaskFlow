@@ -1,12 +1,64 @@
-# React + Vite
+# 📝 Task Manager – React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple and clean Task Management App built with **React + Vite + Firebase**.  
+This app allows you to manage tasks with daily, weekly, and monthly views — including recurring tasks, real-time updates, and more.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Tech Stack
+- **React + Vite** – Fast frontend with hot reload
+- **Firebase Firestore** – Real-time database & storage
+- **Firebase Auth** – (Optional, for future user authentication)
+- **CSS / Tailwind (Optional)** – Minimal and clean styling
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🎯 Current Features
+✅ Add, edit, and delete tasks  
+✅ Mark tasks as completed  
+✅ Task views by **Day**, **Week**, or **Month**  
+✅ Week navigation (forward/back and return to today)  
+✅ Recurring tasks (daily, weekly, monthly)  
+✅ Per-day completion tracking for recurring tasks  
+✅ Real-time updates via Firestore  
+✅ Simple, clean UI
+
+---
+
+## 🌱 Features To Come
+
+### 📌 Task Features
+- [ ] Task priorities (Low, Medium, High)
+- [ ] Subtasks support
+- [ ] Attachments (links or files)
+- [ ] Long task notes/descriptions
+- [ ] Due time (not just date)
+
+### 🔁 Recurring Task Improvements
+- [ ] End date for recurring tasks
+- [ ] "Skip this instance" option
+- [ ] Visual indicator of recurrence pattern
+
+### 📊 Productivity & UX
+- [ ] Weekly task completion summary
+- [ ] Daily task overview
+- [ ] Tag system for filtering tasks
+- [ ] Drag & drop sorting
+- [ ] Dark Mode
+
+### 🔥 Gamification & Analytics
+- [ ] XP & Level system for task completion
+- [ ] Streak tracking
+- [ ] Achievements (e.g., "100 tasks completed")
+
+### 📅 Calendar & Integrations
+- [ ] Google Calendar export
+- [ ] iCal feed support
+
+---
+
+## 🧑‍💻 Setup & Development
+
+1. Install dependencies:
+```bash
+npm install
