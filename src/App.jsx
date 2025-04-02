@@ -23,7 +23,10 @@ export default function App() {
     setWeekOffset((prev) => prev + 1);
   };
 
- 
+  const handleResetWeek = () => {
+    setWeekOffset(0);
+  };
+
   return (
     <div className="app-container" style={{ display: "flex", height: "100vh" }}>
       {/* Sidebar */}
@@ -41,7 +44,7 @@ export default function App() {
         {selectedProject && (
           <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginBottom: "10px" }}>
             <button onClick={handlePrevWeek}>← Previous Week</button>
-            <span>Week Offset: {weekOffset}</span>
+            <button onClick={handleResetWeek}>Today</button>
             <button onClick={handleNextWeek}>Next Week →</button>
           </div>
         )}
