@@ -8,6 +8,8 @@ import {
 } from "../../firebase";
 import { collection, query, where, onSnapshot, updateDoc, doc, orderBy } from "firebase/firestore";
 import WeekView from "./WeekView";
+import MonthView from "./MonthView";
+import { getMonthDays } from "../utils/dateUtils";
 
 const getWeekDays = (offset = 0) => {
   const today = new Date();
@@ -186,6 +188,30 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
           deleteTask={deleteTask}
         />
       )}
+
+      {taskView === "month" && (
+        <MonthView
+          tasks={tasks}
+          setTasks={setTasks}
+          getTasksForDate={getTasksForDate}
+          hiddenDescriptions={hiddenDescriptions}
+          toggleDescription={toggleDescription}
+          hideCompleted={hideCompleted}
+          editingTaskId={editingTaskId}
+          editedTitle={editedTitle}
+          setEditedTitle={setEditedTitle}
+          handleEditTask={handleEditTask}
+          handleSaveTask={handleSaveTask}
+          handleCancelEdit={handleCancelEdit}
+          toggleTaskStatus={toggleTaskStatus}
+          toggleRecurringTaskForDate={toggleRecurringTaskForDate}
+          toggleMenu={toggleMenu}
+          openMenu={openMenu}
+          menuRef={menuRef}
+          deleteTask={deleteTask}
+        />
+      )}
+
     </div>
   );
 }

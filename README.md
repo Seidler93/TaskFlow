@@ -31,7 +31,6 @@ This app allows you to manage tasks with daily, weekly, and monthly views — in
 - [ ] Task priorities (Low, Medium, High)
 - [ ] Subtasks support
 - [ ] Attachments (links or files)
-- [ ] Long task notes/descriptions
 - [ ] Due time (not just date)
 
 ### 🔁 Recurring Task Improvements
@@ -54,6 +53,8 @@ This app allows you to manage tasks with daily, weekly, and monthly views — in
 ### 📅 Calendar & Integrations
 - [ ] Google Calendar export
 - [ ] iCal feed support
+
+See full list and details in [`FutureFeatures.md`](./FutureFeatures.md).
 
 ---
 

@@ -1,6 +1,7 @@
 import { DndContext, useSensor, useSensors, PointerSensor, DragOverlay } from "@dnd-kit/core";
 import { useState } from "react";
 import WeekDay from "./WeekDay";
+import toast from "react-hot-toast";
 
 export default function WeekView({
   tasks,
@@ -44,12 +45,37 @@ export default function WeekView({
         const currentDate = draggedTask.dueDate?.seconds
           ? new Date(draggedTask.dueDate.seconds * 1000)
           : null;
+  
         if (!currentDate || currentDate.toDateString() !== newDate.toDateString()) {
+          // Save original date
+          const previousDate = currentDate;
+  
           handleTaskDateUpdate(draggedTask.id, newDate);
+  
+          toast((t) => (
+            <span>
+              Task moved to {newDate.toDateString()}
+              <button
+                onClick={() => {
+                  handleTaskDateUpdate(draggedTask.id, previousDate);
+                  toast.dismiss(t.id);
+                }}
+                style={{
+                  marginLeft: "10px",
+                  background: "#eee",
+                  padding: "4px 8px",
+                  borderRadius: "4px",
+                }}
+              >
+                Undo
+              </button>
+            </span>
+          ), { duration: 5000 });
         }
       }
     }
   };
+  
 
   const handleDragStart = ({ active }) => {
     const task = tasks.find((t) => t.id === active.id);

@@ -3,6 +3,7 @@ import AddProject from "./components/AddProject";
 import ProjectList from "./components/ProjectList";
 import AddTask from "./components/AddTask";
 import TaskList from "./components/TaskList";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -40,20 +41,45 @@ export default function App() {
       <main className="main-content">
         <h2 className="project-title">{selectedProjectName}</h2>
 
-        {/* Week Navigation Buttons */}
         {selectedProject && (
-          <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginBottom: "10px" }}>
-            <button onClick={handlePrevWeek}>← Previous Week</button>
-            <button onClick={handleResetWeek}>Today</button>
-            <button onClick={handleNextWeek}>Next Week →</button>
-          </div>
+          <>
+            {/* Week Navigation Buttons */}
+            <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginBottom: "10px" }}>
+              <button onClick={handlePrevWeek}>← Previous Week</button>
+              <button onClick={handleResetWeek}>Today</button>
+              <button onClick={handleNextWeek}>Next Week →</button>
+            </div>
+
+            {/* View Toggle Buttons */}
+            <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginBottom: "20px" }}>
+              <button
+                onClick={() => setTaskView("day")}
+                style={{ fontWeight: taskView === "day" ? "bold" : "normal" }}
+              >
+                Day View
+              </button>
+              <button
+                onClick={() => setTaskView("week")}
+                style={{ fontWeight: taskView === "week" ? "bold" : "normal" }}
+              >
+                Week View
+              </button>
+              <button
+                onClick={() => setTaskView("month")}
+                style={{ fontWeight: taskView === "month" ? "bold" : "normal" }}
+              >
+                Month View
+              </button>
+            </div>
+          </>
         )}
+
 
         {selectedProject ? (
           <div className="task-container">
 
             {/* Task List Section */}
-            <TaskList projectId={selectedProject} taskView={"week"} weekOffset={weekOffset}/>
+            <TaskList projectId={selectedProject} taskView={taskView} weekOffset={weekOffset}/>
             
             {/* New Task Input Section */}
             {/* <div className="task-input-container">
@@ -65,6 +91,7 @@ export default function App() {
             Select a project to see tasks.
           </p>
         )}
+        <Toaster position="bottom-center" />
       </main>
     </div>
   );

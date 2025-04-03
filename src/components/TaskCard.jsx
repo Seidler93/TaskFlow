@@ -26,7 +26,7 @@ export default function TaskCard({
 
   return (
     <div
-      className={`task-card ${task.isCompleted ? "opacity-50" : "opacity-100"}`}
+      className={`task-card ${task.isCompleted ? "completed" : ""}`}
       ref={setNodeRef}
       {...listeners}
       {...attributes}
