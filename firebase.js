@@ -85,6 +85,19 @@ export const updateTaskStatus = async (taskId, newStatus) => {
   }
 };
 
+export const updateTaskDate = async (taskId, newDate) => {
+  try {
+    const taskRef = doc(db, "tasks", taskId);
+    await updateDoc(taskRef, {
+      dueDate: newDate,
+    });
+    console.log(`Task ${taskId} moved to ${newDate.toDateString()}`);
+  } catch (error) {
+    console.error("Error updating task date:", error);
+  }
+};
+
+
 // ✅ For recurring task (toggle for specific date)
 export const toggleRecurringTaskForDate = async (taskId, date, isCompleted) => {
   try {
