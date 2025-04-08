@@ -102,7 +102,7 @@ export default function TaskCard({
         </div>
       </div>
 
-      {!hiddenDescriptions.includes(task.id) && task.description && (
+      {Array.isArray(hiddenDescriptions) && !hiddenDescriptions.includes(task.id) && task.description && (
         <p
           className={`task-description text-gray-500 text-sm mt-2 px-2 pb-2 ${
             task.isCompleted ? "completed-task" : ""

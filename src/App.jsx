@@ -8,7 +8,7 @@ import { Toaster } from "react-hot-toast";
 export default function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedProjectName, setSelectedProjectName] = useState("");
-  const [taskView, setTaskView] = useState('day');
+  const [taskView, setTaskView] = useState('week');
   const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, +1 = next week, -1 = last week
 
   const handleProjectSelect = (projectId, projectName) => {

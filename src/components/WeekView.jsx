@@ -25,6 +25,7 @@ export default function WeekView({
   getTasksForDate,
   getWeekDays,
   deleteTask,
+  projectId,
 }) {
   const [draggedTask, setDraggedTask] = useState(null);
 
@@ -41,6 +42,8 @@ export default function WeekView({
     if (over && active.id) {
       const draggedTask = tasks.find((t) => t.id === active.id);
       const newDate = new Date(over.id);
+      console.log(over);
+      
       if (draggedTask) {
         const currentDate = draggedTask.dueDate?.seconds
           ? new Date(draggedTask.dueDate.seconds * 1000)
@@ -110,6 +113,7 @@ export default function WeekView({
             openMenu={openMenu}
             menuRef={menuRef}
             deleteTask={deleteTask}
+            projectId={projectId}
           />
         ))}
       </div>

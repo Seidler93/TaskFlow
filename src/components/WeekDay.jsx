@@ -21,6 +21,7 @@ export default function WeekDay({
   openMenu,
   menuRef,
   deleteTask,
+  projectId
 }) {
   const { setNodeRef, isOver } = useDroppable({
     id: day.toDateString(),
@@ -33,9 +34,10 @@ export default function WeekDay({
     >
       <h3>{day.toDateString()}</h3>
 
-      {tasks.length > 0 ? (
-        tasks.map((task) => (
-          <TaskCard
+      <div className="day-tasks">
+        {tasks.length > 0 ? (
+          tasks.map((task) => (
+            <TaskCard
             key={task.id}
             task={task}
             day={day}
@@ -55,13 +57,14 @@ export default function WeekDay({
             openMenu={openMenu}
             menuRef={menuRef}
             deleteTask={deleteTask}
-          />
-        ))
-      ) : (
-        <p className="no-task">No tasks</p>
-      )}
+            />
+          ))
+        ) : (
+          <p className="no-task">No tasks</p>
+        )}
+      </div>
 
-      <AddTask projectId={tasks[0]?.projectId} date={day} />
+      <AddTask projectId={projectId} date={day} />
     </div>
   );
 }

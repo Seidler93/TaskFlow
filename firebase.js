@@ -87,6 +87,8 @@ export const updateTaskStatus = async (taskId, newStatus) => {
 
 export const updateTaskDate = async (taskId, newDate) => {
   try {
+    console.log(newDate);
+    
     const taskRef = doc(db, "tasks", taskId);
     await updateDoc(taskRef, {
       dueDate: newDate,

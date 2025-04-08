@@ -9,7 +9,6 @@ import {
 import { collection, query, where, onSnapshot, updateDoc, doc, orderBy } from "firebase/firestore";
 import WeekView from "./WeekView";
 import MonthView from "./MonthView";
-import { getMonthDays } from "../utils/dateUtils";
 
 const getWeekDays = (offset = 0) => {
   const today = new Date();
@@ -104,7 +103,6 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
 
   const toggleTaskStatus = async (taskId, currentStatus) => {
     const newStatus = currentStatus === "pending" ? "completed" : "pending";
-    console.log('asdf');
     await updateTaskStatus(taskId, newStatus);
     
   };
@@ -186,6 +184,7 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
           getTasksForDate={getTasksForDate}
           getWeekDays={getWeekDays}
           deleteTask={deleteTask}
+          projectId={projectId}
         />
       )}
 
@@ -194,6 +193,7 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
           tasks={tasks}
           setTasks={setTasks}
           getTasksForDate={getTasksForDate}
+          handleTaskDateUpdate={handleTaskDateUpdate}
           hiddenDescriptions={hiddenDescriptions}
           toggleDescription={toggleDescription}
           hideCompleted={hideCompleted}
@@ -209,6 +209,7 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
           openMenu={openMenu}
           menuRef={menuRef}
           deleteTask={deleteTask}
+          projectId={projectId}
         />
       )}
 

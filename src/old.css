@@ -1,0 +1,531 @@
+/* Reset default margins & paddings */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Set full-page layout */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  /* background-color: #121212; */
+  background: linear-gradient(135deg, #1f1f1f, #2c2f33);
+
+  color: white;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.sidebar li:hover {
+  background-color: #333;
+}
+
+/* Main content styles */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #444444;
+}
+
+.task-container {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0; /* ensures flexbox respects overflow */
+}
+
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.task-item input {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.task-item span {
+  font-size: 1rem;
+}
+
+/* Task Container */
+.er {
+  /* max-width: 600px; */
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* New Task Input Section */
+.task-input-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #222;
+  color: white;
+  border-radius: 8px;
+  max-width: 350px;
+}
+
+/* Task List */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Task Card */
+.task-card {
+  background: #1f1f1f;
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  max-width: 350px;
+  position: relative;
+}
+
+.task-card:hover {
+  background-color: #1f1f1fb4;
+  cursor: pointer;
+}
+
+/* Task Header */
+.task-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+}
+
+.task-header input {
+  transform: scale(1.2);
+  cursor: pointer;
+  text-align: top;
+}
+
+.task-header span {
+  text-align: start;
+}
+
+.task-status {
+  height: 100%;
+  min-width: 10px;
+  position: relative;
+}
+
+.task-status input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* Completed Task Style */
+.completed-task {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+/* Task Footer */
+.task-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.task-btn {
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.task-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Task Card */
+.task-card {
+  background: #1f1f1f;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+}
+
+.task-card span {
+  margin-right: 18px;
+}
+
+.task-card.small {
+  padding: 5px;
+  font-size: 0.8rem;
+}
+
+/* Week View */
+.week-view {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.week-day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Month View */
+.month-view {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.month-day {
+  background: #333;
+  color: white;
+  padding: 8px;
+  border-radius: 5px;
+  text-align: center;
+  min-height: 60px;
+}
+
+.no-task {
+  color: gray;
+  font-size: 0.8rem;
+}
+
+.menu-container {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-top: 8px;
+}
+
+/* Menu Button (⋮) */
+.menu-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: auto;
+  width: 40px;
+}
+
+/* Dropdown Menu */
+.menu-dropdown {
+  position: absolute;
+  width: 100px;
+  margin: 0;
+  margin-top: .5rem;
+  margin-left: 1.5rem;
+  left: 0;
+  top: 100%;
+  background: #333;
+  padding: 8px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+/* Dropdown Buttons */
+.menu-dropdown button {
+  background: none;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  display: inline-block;
+}
+
+.menu-dropdown button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.project-title {
+  color: white;
+}
+
+.week-day h3 {
+  margin-bottom: 10px;
+}
+
+.add-task {
+  width: 100%;
+  background: none;
+  border: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  border-radius: 4px;
+}
+
+.add-task span {
+  color: white;
+  margin-right: 6px;
+}
+
+.add-task:hover {
+  cursor: pointer;
+  color: #000;
+  background-color: #f1f1f1;
+}
+
+.add-task:hover span {
+  color: black;
+}
+
+.dropdown-arrow {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #888;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 500;
+}
+
+.task-description {
+  margin-top: 4px;
+  text-align: left;
+  font-size: .75rem;
+}
+
+.task-card.completed {
+  opacity: 0.7;
+}
+
+.task-card.dragging {
+  opacity: 0.8;
+  background-color: #f0f0f0;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.week-day.droppable-over {
+  background-color: rgba(100, 149, 237, 0.1); /* light blue tint */
+  border: 2px dashed #6495ed;
+}
+
+.week-day {
+  transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+.week-day {
+  border: 2px dashed transparent; /* always 2px border */
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.week-day.droppable-over {
+  background-color: rgba(100, 149, 237, 0.1); /* light blue tint */
+  border-color: #6495ed;
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.month-day-cell {
+  border: 1px solid #ddd;
+  min-height: 140px;
+  max-height: 450px;
+  overflow: hidden;
+  max-width: 100%; /* No fixed width */
+  display: flex;
+  flex-direction: column;
+}
+
+.day-header {
+  font-weight: bold;
+  padding: 4px;
+  background-color: #f9f9f9;
+}
+
+.day-tasks {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px;
+  padding-right: 4px; /* keeps scrollbar from overlapping */
+  margin-top: 4px;
+  min-height: 0;
+}
+
+.day-tasks::-webkit-scrollbar {
+  width: 6px;
+}
+.day-tasks::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+
+.month-task-card {
+  background-color: #fff;
+  padding: 4px 6px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  cursor: pointer;
+  font-size: 12px;
+  word-wrap: break-word;
+}
+
+
+.month-task-card.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.month-task-card:hover {
+  opacity: .8;
+}
+
+.task-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.task-bullet {
+  color: #6495ed;
+  font-weight: bold;
+}
+
+.task-actions {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.month-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.weekday-cell {
+  padding: 5px 0;
+}
+
+.task-circle {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 1px solid #999;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.task-circle.completed {
+  background-color: #6495ed;
+}
+
+.month-day-cell.droppable-over {
+  background-color: rgba(100, 149, 237, 0.1);
+  border-color: #6495ed;
+}
+
+.month-task-card.dragging {
+  opacity: 0.8;
+  background-color: #f0f0f0;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.month-grid, .month-task-card {
+  user-select: none;
+}
+
+body.dragging {
+  cursor: grabbing;
+}
+
+.task-title span {
+  pointer-events: none;
+}
+
+.month-task-card.dragging {
+  opacity: 0.9;
+  background-color: #e0e0e0;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  user-select: none;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.month-grid {
+  max-height: calc(100vh - 200px); /* adjust based on your header/nav size */
+  overflow-y: auto;
+}
+
+
+
+* {
+  user-select: none;
+}
+
