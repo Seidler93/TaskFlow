@@ -10,9 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -20,7 +21,7 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      - name: Deploy to Firebase
+      - name: Deploy to Firebase Hosting
         uses: w9jds/firebase-action@v13
         with:
           args: deploy --only hosting
