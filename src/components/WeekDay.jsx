@@ -38,25 +38,25 @@ export default function WeekDay({
         {tasks.length > 0 ? (
           tasks.map((task) => (
             <TaskCard
-            key={task.id}
-            task={task}
-            day={day}
-            setTasks={setTasks}
-            hiddenDescriptions={hiddenDescriptions}
-            toggleDescription={toggleDescription}
-            hideCompleted={hideCompleted}
-            editingTaskId={editingTaskId}
-            editedTitle={editedTitle}
-            setEditedTitle={setEditedTitle}
-            handleEditTask={handleEditTask}
-            handleSaveTask={handleSaveTask}
-            handleCancelEdit={handleCancelEdit}
-            toggleTaskStatus={toggleTaskStatus}
-            toggleRecurringTaskForDate={toggleRecurringTaskForDate}
-            toggleMenu={toggleMenu}
-            openMenu={openMenu}
-            menuRef={menuRef}
-            deleteTask={deleteTask}
+              key={task.id}
+              task={task}
+              day={day}
+              setTasks={setTasks}
+              hiddenDescriptions={hiddenDescriptions}
+              toggleDescription={toggleDescription}
+              hideCompleted={hideCompleted}
+              editingTaskId={editingTaskId}
+              editedTitle={editedTitle}
+              setEditedTitle={setEditedTitle}
+              handleEditTask={handleEditTask}
+              handleSaveTask={handleSaveTask}
+              handleCancelEdit={handleCancelEdit}
+              toggleTaskStatus={toggleTaskStatus}
+              toggleRecurringTaskForDate={toggleRecurringTaskForDate}
+              toggleMenu={toggleMenu}
+              openMenu={openMenu}
+              menuRef={menuRef}
+              deleteTask={deleteTask}
             />
           ))
         ) : (

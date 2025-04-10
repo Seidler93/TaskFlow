@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
@@ -15,7 +15,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { getMonthDays } from "../utils/dateUtils";
-import AddTask from "./AddTask";
 import MonthDayCell from "./MonthDayCell";
 
 export default function MonthView({
@@ -27,6 +26,10 @@ export default function MonthView({
 }) {
   const [draggedTask, setDraggedTask] = useState(null);
   const days = getMonthDays();
+
+  useEffect(() => {
+      console.log("Updated tasks:", tasks);
+    }, [tasks]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 

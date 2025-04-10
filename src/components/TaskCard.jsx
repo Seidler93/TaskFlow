@@ -1,4 +1,5 @@
 import { useDraggable } from "@dnd-kit/core";
+import { useEffect } from "react";
 
 export default function TaskCard({
   task,
@@ -24,9 +25,13 @@ export default function TaskCard({
     data: { task },
   });
 
+  useEffect(() => {
+      console.log("Updated task:", task);
+    }, [task]);
+
   return (
     <div
-      className={`task-card ${task.isCompleted ? "completed" : ""}`}
+      className={`task-card ${task.status === "completed" ? "completed" : ""}`}
       ref={setNodeRef}
       {...listeners}
       {...attributes}
@@ -70,7 +75,7 @@ export default function TaskCard({
           />
         ) : (
           <span
-            className={task.isCompleted ? "completed-task" : ""}
+            className={task.status === "completed" ? "completed-task" : ""}
             style={{ flex: 1 }}
           >
             {task.title}
@@ -105,8 +110,7 @@ export default function TaskCard({
       {Array.isArray(hiddenDescriptions) && !hiddenDescriptions.includes(task.id) && task.description && (
         <p
           className={`task-description text-gray-500 text-sm mt-2 px-2 pb-2 ${
-            task.isCompleted ? "completed-task" : ""
-          }`}
+            task.status === "completed" ? "completed-task" : ""}`}
         >
           {task.description}
         </p>

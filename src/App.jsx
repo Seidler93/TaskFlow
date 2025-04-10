@@ -8,8 +8,9 @@ import { Toaster } from "react-hot-toast";
 export default function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedProjectName, setSelectedProjectName] = useState("");
-  const [taskView, setTaskView] = useState('week');
+  const [taskView, setTaskView] = useState("week");
   const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, +1 = next week, -1 = last week
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true); // Track sidebar visibility
 
   const handleProjectSelect = (projectId, projectName) => {
     setSelectedProject(projectId);
@@ -28,13 +29,27 @@ export default function App() {
     setWeekOffset(0);
   };
 
+  // Toggle Sidebar visibility
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible); // Toggle state
+  };
+
   return (
-    <div className="app-container" style={{ display: "flex", height: "100vh" }}>
+    <div className="app-container">
       {/* Sidebar */}
       <aside className="sidebar">
-        <h2>Projects</h2>
-        <AddProject onProjectAdded={(id) => setSelectedProject(id)} />
-        <ProjectList onSelectProject={handleProjectSelect} />
+        {/* Sidebar Toggle Button (for mobile) */}
+        <div className="sidebar-toggle">
+          <h2>{selectedProjectName}</h2>
+          <button onClick={toggleSidebar}>
+            ☰
+          </button>
+        </div>
+        <div className={`sidebar-main ${isSidebarVisible ? "show" : "hide"}`}>
+          <h2>Projects</h2>
+          <AddProject onProjectAdded={(id) => setSelectedProject(id)} />
+          <ProjectList onSelectProject={handleProjectSelect} />
+        </div>
       </aside>
 
       {/* Main Content */}
@@ -44,14 +59,28 @@ export default function App() {
         {selectedProject && (
           <>
             {/* Week Navigation Buttons */}
-            <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginBottom: "10px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "10px",
+                marginBottom: "10px",
+              }}
+            >
               <button onClick={handlePrevWeek}>← Previous Week</button>
               <button onClick={handleResetWeek}>Today</button>
               <button onClick={handleNextWeek}>Next Week →</button>
             </div>
 
             {/* View Toggle Buttons */}
-            <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginBottom: "20px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "10px",
+                marginBottom: "20px",
+              }}
+            >
               <button
                 onClick={() => setTaskView("day")}
                 style={{ fontWeight: taskView === "day" ? "bold" : "normal" }}
@@ -74,13 +103,11 @@ export default function App() {
           </>
         )}
 
-
         {selectedProject ? (
           <div className="task-container">
-
             {/* Task List Section */}
-            <TaskList projectId={selectedProject} taskView={taskView} weekOffset={weekOffset}/>
-            
+            <TaskList projectId={selectedProject} taskView={taskView} weekOffset={weekOffset} />
+
             {/* New Task Input Section */}
             {/* <div className="task-input-container">
               <AddTask projectId={selectedProject} />

@@ -9,6 +9,8 @@ import {
 import { collection, query, where, onSnapshot, updateDoc, doc, orderBy } from "firebase/firestore";
 import WeekView from "./WeekView";
 import MonthView from "./MonthView";
+import DayView from "./DayView";
+
 
 const getWeekDays = (offset = 0) => {
   const today = new Date();
@@ -115,6 +117,10 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
     await updateTaskDate(taskId, newDate);
   };
 
+  const getTodayDate = () => {
+    return new Date();
+  };
+  
   const getTasksForDate = (date) => {
     return tasks
       .map((task) => {
@@ -210,6 +216,32 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
           menuRef={menuRef}
           deleteTask={deleteTask}
           projectId={projectId}
+        />
+      )}
+
+      {taskView === "day" && (
+        <DayView
+          tasks={tasks}
+          setTasks={setTasks}
+          getTasksForDate={getTasksForDate}
+          handleTaskDateUpdate={handleTaskDateUpdate}
+          hiddenDescriptions={hiddenDescriptions}
+          toggleDescription={toggleDescription}
+          hideCompleted={hideCompleted}
+          editingTaskId={editingTaskId}
+          editedTitle={editedTitle}
+          setEditedTitle={setEditedTitle}
+          handleEditTask={handleEditTask}
+          handleSaveTask={handleSaveTask}
+          handleCancelEdit={handleCancelEdit}
+          toggleTaskStatus={toggleTaskStatus}
+          toggleRecurringTaskForDate={toggleRecurringTaskForDate}
+          toggleMenu={toggleMenu}
+          openMenu={openMenu}
+          menuRef={menuRef}
+          deleteTask={deleteTask}
+          projectId={projectId}
+          day={getTodayDate()}
         />
       )}
 
