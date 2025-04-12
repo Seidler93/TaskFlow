@@ -38,8 +38,6 @@ html, body, #root {
   min-height: 0;
 }
 
-
-
 /* Project title */
 .project-title {
   color: white;
@@ -102,6 +100,11 @@ html, body, #root {
   background-color: #f0f0f0;
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.task-title {
+  text-align: left;
+  margin-right: 25px;
 }
 
 /* Task header */
@@ -424,7 +427,6 @@ body.dragging {
 
 /* Toggle Button (for mobile) */
 .sidebar-toggle {
-  padding: 10px;
   z-index: 100;
   display: flex;
   justify-content: flex-end;
@@ -479,6 +481,32 @@ body.dragging {
   font-size: 1.2rem;
   color: white;
   font-weight: bold;
+}
+
+.view-toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.view-dropdown {
+  padding: 8px;
+  font-size: 1rem;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.view-dropdown:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+label {
+  font-size: 1.2rem;
+  color: #333;
 }
 
 .week-day-container h3 {
@@ -569,5 +597,9 @@ body.dragging {
 
   .project-title {
     display: none;
+  }
+
+  .add-task-container {
+    margin-bottom: 50px;
   }
 }

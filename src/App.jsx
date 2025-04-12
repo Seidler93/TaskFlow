@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import AddProject from "./components/AddProject";
 import ProjectList from "./components/ProjectList";
-import AddTask from "./components/AddTask";
 import TaskList from "./components/TaskList";
 import { Toaster } from "react-hot-toast";
 
@@ -12,18 +11,25 @@ export default function App() {
 
   const [selectedProject, setSelectedProject] = useState(storedProjectId || null);
   const [selectedProjectName, setSelectedProjectName] = useState(storedProjectName || "");
-  const [taskView, setTaskView] = useState("week");
+  const [taskView, setTaskView] = useState("day");
   const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, +1 = next week, -1 = last week
   const [isSidebarVisible, setIsSidebarVisible] = useState(true); // Track sidebar visibility
 
   const handleProjectSelect = (projectId, projectName) => {
     setSelectedProject(projectId);
     setSelectedProjectName(projectName);
+    setIsSidebarVisible(false);
 
     // Save the selected project ID and name to localStorage
     localStorage.setItem("selectedProjectId", projectId);
     localStorage.setItem("selectedProjectName", projectName);
   };
+
+  useEffect(() => {
+    if (storedProjectId !== null) {
+      setIsSidebarVisible(false);
+    }
+  }, []);
 
   const handlePrevWeek = () => {
     setWeekOffset((prev) => prev - 1);
@@ -68,13 +74,27 @@ export default function App() {
           <div className="navigation-buttons">
             {/* Week Navigation Buttons */}
             <div className="week-navigation">
-              <button onClick={handlePrevWeek} className="nav-btn">← Previous Week</button>
+              <button onClick={handlePrevWeek} className="nav-btn">←</button>
               <button onClick={handleResetWeek} className="nav-btn">Today</button>
-              <button onClick={handleNextWeek} className="nav-btn">Next Week →</button>
+              <button onClick={handleNextWeek} className="nav-btn">→</button>
+              <div className="view-toggle">
+                {/* <label htmlFor="view-select">Select View</label> */}
+                <select
+                  id="view-select"
+                  value={taskView}
+                  onChange={(e) => setTaskView(e.target.value)}
+                  className="view-dropdown"
+                >
+                  <option value="day">Day</option>
+                  <option value="week">Week</option>
+                  <option value="month">Month</option>
+                </select>
+              </div>
+
             </div>
           
             {/* View Toggle Buttons */}
-            <div className="view-toggle">
+            {/* <div className="view-toggle">
               <button
                 onClick={() => setTaskView("day")}
                 className={`view-btn ${taskView === "day" ? "active" : ""}`}
@@ -93,7 +113,7 @@ export default function App() {
               >
                 Month View
               </button>
-            </div>
+            </div> */}
           </div>        
         )}
 

@@ -75,7 +75,7 @@ export default function TaskCard({
           />
         ) : (
           <span
-            className={task.status === "completed" ? "completed-task" : ""}
+            className={`task-title ${task.status === "completed" ? "completed-task" : ""}`}
             style={{ flex: 1 }}
           >
             {task.title}
