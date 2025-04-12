@@ -3,6 +3,7 @@ import AddProject from "./components/AddProject";
 import ProjectList from "./components/ProjectList";
 import TaskList from "./components/TaskList";
 import { Toaster } from "react-hot-toast";
+import TaskEditModal from "./components/TaskEditModal";
 
 export default function App() {
   // Check localStorage for the selected project ID and name on component mount
@@ -48,6 +49,21 @@ export default function App() {
     setIsSidebarVisible(!isSidebarVisible); // Toggle state
   };
 
+  const handleOpenModal = (task) => {
+    setSelectedTask(task); // Set the selected task
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
+
+  const handleSaveTask = (updatedTask) => {
+    // Save the updated task and close the modal
+    console.log("Updated Task:", updatedTask);
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="app-container">
       {/* Sidebar */}
@@ -90,48 +106,28 @@ export default function App() {
                   <option value="month">Month</option>
                 </select>
               </div>
-
             </div>
-          
-            {/* View Toggle Buttons */}
-            {/* <div className="view-toggle">
-              <button
-                onClick={() => setTaskView("day")}
-                className={`view-btn ${taskView === "day" ? "active" : ""}`}
-              >
-                Day View
-              </button>
-              <button
-                onClick={() => setTaskView("week")}
-                className={`view-btn ${taskView === "week" ? "active" : ""}`}
-              >
-                Week View
-              </button>
-              <button
-                onClick={() => setTaskView("month")}
-                className={`view-btn ${taskView === "month" ? "active" : ""}`}
-              >
-                Month View
-              </button>
-            </div> */}
           </div>        
         )}
 
         {selectedProject ? (
           <div className="task-container">
-            {/* Task List Section */}
             <TaskList projectId={selectedProject} taskView={taskView} weekOffset={weekOffset} />
-
-            {/* New Task Input Section */}
-            {/* <div className="task-input-container">
-              <AddTask projectId={selectedProject} />
-            </div> */}
           </div>
         ) : (
           <p style={{ textAlign: "center", marginTop: "20px", color: "#666" }}>
             Select a project to see tasks.
           </p>
         )}
+
+        {/* Task Edit Modal */}
+        <TaskEditModal
+          task={task}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSave={handleSaveTask}
+        />
+
         <Toaster position="bottom-center" />
       </main>
     </div>

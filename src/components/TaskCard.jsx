@@ -1,5 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import TaskEditModal from "./TaskEditModal";
 
 export default function TaskCard({
   task,
@@ -19,15 +20,17 @@ export default function TaskCard({
   openMenu,
   menuRef,
   deleteTask,
+  openEditModal
 }) {
+
   const { attributes, listeners, setNodeRef } = useDraggable({
     id: task.id,
     data: { task },
   });
-
-  useEffect(() => {
-      console.log("Updated task:", task);
-    }, [task]);
+  
+  // useEffect(() => {
+  //     console.log("Updated task:", task);
+  //   }, [task]);
 
   return (
     <div
@@ -40,6 +43,7 @@ export default function TaskCard({
           toggleDescription(task.id);
         }
       }}
+      onDoubleClick={() => openEditModal(task)} // Trigger the modal open
     >
       <div className="task-header">
         <div className="task-status">
@@ -61,27 +65,13 @@ export default function TaskCard({
 
         </div>
 
-        {editingTaskId === task.id ? (
-          <input
-            type="text"
-            value={editedTitle}
-            onChange={(e) => setEditedTitle(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSaveTask(task.id);
-              if (e.key === "Escape") handleCancelEdit();
-            }}
-            autoFocus
-            className="border rounded p-1 w-full"
-          />
-        ) : (
           <span
             className={`task-title ${task.status === "completed" ? "completed-task" : ""}`}
             style={{ flex: 1 }}
           >
             {task.title}
           </span>
-        )}
-
+        
         <div className="menu-container">
           <button 
             className="menu-button" 
@@ -93,7 +83,7 @@ export default function TaskCard({
           </button>
           {openMenu === task.id && (
             <div className="menu-dropdown" ref={menuRef}>
-              <button onClick={() => handleEditTask(task)}>✏️ Edit</button>
+              <button onClick={() => handleOpenModal()}>✏️ Edit</button>
               <button
                 onClick={async () => {
                   await deleteTask(task.id);
