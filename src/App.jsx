@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddProject from "./components/AddProject";
 import ProjectList from "./components/ProjectList";
 import AddTask from "./components/AddTask";
@@ -6,8 +6,12 @@ import TaskList from "./components/TaskList";
 import { Toaster } from "react-hot-toast";
 
 export default function App() {
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [selectedProjectName, setSelectedProjectName] = useState("");
+  // Check localStorage for the selected project ID and name on component mount
+  const storedProjectId = localStorage.getItem("selectedProjectId");
+  const storedProjectName = localStorage.getItem("selectedProjectName");
+
+  const [selectedProject, setSelectedProject] = useState(storedProjectId || null);
+  const [selectedProjectName, setSelectedProjectName] = useState(storedProjectName || "");
   const [taskView, setTaskView] = useState("week");
   const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, +1 = next week, -1 = last week
   const [isSidebarVisible, setIsSidebarVisible] = useState(true); // Track sidebar visibility
@@ -15,6 +19,10 @@ export default function App() {
   const handleProjectSelect = (projectId, projectName) => {
     setSelectedProject(projectId);
     setSelectedProjectName(projectName);
+
+    // Save the selected project ID and name to localStorage
+    localStorage.setItem("selectedProjectId", projectId);
+    localStorage.setItem("selectedProjectName", projectName);
   };
 
   const handlePrevWeek = () => {
@@ -57,50 +65,36 @@ export default function App() {
         <h2 className="project-title">{selectedProjectName}</h2>
 
         {selectedProject && (
-          <>
+          <div className="navigation-buttons">
             {/* Week Navigation Buttons */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "10px",
-                marginBottom: "10px",
-              }}
-            >
-              <button onClick={handlePrevWeek}>← Previous Week</button>
-              <button onClick={handleResetWeek}>Today</button>
-              <button onClick={handleNextWeek}>Next Week →</button>
+            <div className="week-navigation">
+              <button onClick={handlePrevWeek} className="nav-btn">← Previous Week</button>
+              <button onClick={handleResetWeek} className="nav-btn">Today</button>
+              <button onClick={handleNextWeek} className="nav-btn">Next Week →</button>
             </div>
-
+          
             {/* View Toggle Buttons */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "10px",
-                marginBottom: "20px",
-              }}
-            >
+            <div className="view-toggle">
               <button
                 onClick={() => setTaskView("day")}
-                style={{ fontWeight: taskView === "day" ? "bold" : "normal" }}
+                className={`view-btn ${taskView === "day" ? "active" : ""}`}
               >
                 Day View
               </button>
               <button
                 onClick={() => setTaskView("week")}
-                style={{ fontWeight: taskView === "week" ? "bold" : "normal" }}
+                className={`view-btn ${taskView === "week" ? "active" : ""}`}
               >
                 Week View
               </button>
               <button
                 onClick={() => setTaskView("month")}
-                style={{ fontWeight: taskView === "month" ? "bold" : "normal" }}
+                className={`view-btn ${taskView === "month" ? "active" : ""}`}
               >
                 Month View
               </button>
             </div>
-          </>
+          </div>        
         )}
 
         {selectedProject ? (

@@ -3,8 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="/manifest.json">
     <meta name="description" content="TaskFlow - Smart, Minimal Task Management" />
+    
+    <!-- Hides the browser bar on iOS and Android -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Makes the app fullscreen on mobile when saved to the home screen -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+    <!-- Set the theme color for the address bar -->
+    <meta name="theme-color" content="#2c3e50">
+
+    <!-- Specify the app icon for home screen and splash screen on iOS -->
+    <link rel="apple-touch-icon" href="/path-to-your-icon.png">
+
     <title>TaskFlow</title>
   </head>
   <body>

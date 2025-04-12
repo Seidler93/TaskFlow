@@ -63,11 +63,11 @@ export default function DayView({
   return (
     <div className="week-day-container">
       {/* Buttons to change day */}
+      <h3>{day.toDateString()}</h3>
       <div className="day-navigation">
         <button onClick={goToPreviousDay}>← Previous Day</button>
-        <h3>{day.toDateString()}</h3>
-        <button onClick={goToNextDay}>Next Day →</button>
         <button onClick={goToToday}>Today</button> {/* Today Button */}
+        <button onClick={goToNextDay}>Next Day →</button>
       </div>
 
       <div
