@@ -1,7 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAppContext } from "../context/AppContext";
+import { updateTask } from "../../firebase";
 
-const TaskEditModal = ({ task, isOpen, onClose, onSave }) => {
-  const [editedTask, setEditedTask] = useState(task);
+const TaskEditModal = ({ isOpen, onClose }) => {
+  const { selectedTask } = useAppContext();
+  const [editedTask, setEditedTask] = useState(null); // Set to null initially
+  const [loading, setLoading] = useState(true); // Track loading state
+
+  // Function to format Firebase timestamp to yyyy-MM-dd
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "";
+    const date = new Date(timestamp.seconds * 1000);
+    return date.toISOString().split("T")[0]; // Return the date in yyyy-MM-dd format
+  };
+
+  // Update the modal state when selectedTask is available
+  useEffect(() => {
+    if (selectedTask) {
+      setEditedTask({
+        ...selectedTask,
+        dueDate: formatDate(selectedTask.dueDate), // Format the date before setting state
+      });
+      setLoading(false); // Mark loading as false once task is set
+    }
+  }, [selectedTask]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -12,11 +34,31 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }) => {
   };
 
   const handleSave = () => {
-    onSave(editedTask);
-    onClose();
+    if (editedTask) {
+      // Convert dueDate back to a date object before saving to Firestore
+      const formattedDate = new Date(editedTask.dueDate);
+      updateTask(editedTask.id, {
+        ...editedTask,
+        dueDate: formattedDate,
+        ...(editedTask.recurrence ? { recurrence: { frequency: editedTask.recurrence, interval: 1 } } : {})
+      });      
+      onClose();
+    }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) return null; // Don't show modal if it's closed
+
+  // Show a loading state if the task is being fetched
+  if (loading) {
+    return (
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <h2>Loading...</h2>
+          <p>Fetching task data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -68,8 +110,8 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }) => {
           <label>
             Recurrence:
             <select
-              name="recurrenceFrequency"
-              value={editedTask.recurrenceFrequency || ""}
+              name="recurrence"
+              value={editedTask.recurrence || ""}
               onChange={handleChange}
             >
               <option value="">None</option>

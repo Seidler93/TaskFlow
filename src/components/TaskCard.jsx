@@ -1,6 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { useEffect, useState } from "react";
-import TaskEditModal from "./TaskEditModal";
+import { useAppContext } from "../context/AppContext";
 
 export default function TaskCard({
   task,
@@ -8,20 +8,15 @@ export default function TaskCard({
   setTasks,
   hiddenDescriptions,
   toggleDescription,
-  editingTaskId,
-  editedTitle,
-  setEditedTitle,
-  handleEditTask,
-  handleSaveTask,
-  handleCancelEdit,
   toggleTaskStatus,
   toggleRecurringTaskForDate,
   toggleMenu,
   openMenu,
   menuRef,
   deleteTask,
-  openEditModal
 }) {
+
+  const { openEditModal, editModalOpen, setEditModalOpen, selectedTask, setSelectedTask } = useAppContext();
 
   const { attributes, listeners, setNodeRef } = useDraggable({
     id: task.id,

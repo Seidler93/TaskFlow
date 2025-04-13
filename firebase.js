@@ -125,3 +125,15 @@ export const deleteTask = async (taskId) => {
     console.error("Error deleting task:", error);
   }
 };
+
+// ✅ Update Task Details (e.g., title, description, status, recurrence)
+export const updateTask = async (taskId, updatedFields) => {
+  try {
+    const taskRef = doc(db, "tasks", taskId);
+    await updateDoc(taskRef, updatedFields); // Update only the fields that are passed
+    console.log(`Task ${taskId} updated with fields:`, updatedFields);
+  } catch (error) {
+    console.error("Error updating task:", error);
+  }
+};
+

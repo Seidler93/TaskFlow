@@ -4,6 +4,7 @@ import ProjectList from "./components/ProjectList";
 import TaskList from "./components/TaskList";
 import { Toaster } from "react-hot-toast";
 import TaskEditModal from "./components/TaskEditModal";
+import { useAppContext } from "./context/AppContext";
 
 export default function App() {
   // Check localStorage for the selected project ID and name on component mount
@@ -16,6 +17,9 @@ export default function App() {
   const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, +1 = next week, -1 = last week
   const [isSidebarVisible, setIsSidebarVisible] = useState(true); // Track sidebar visibility
 
+  const { editModalOpen, setEditModalOpen, selectedTask, setSelectedTask } = useAppContext();
+
+
   const handleProjectSelect = (projectId, projectName) => {
     setSelectedProject(projectId);
     setSelectedProjectName(projectName);
@@ -24,6 +28,10 @@ export default function App() {
     // Save the selected project ID and name to localStorage
     localStorage.setItem("selectedProjectId", projectId);
     localStorage.setItem("selectedProjectName", projectName);
+  };
+
+  const toggleModal = () => {
+    setIsModalOpen((prevState) => !prevState); // Toggle modal visibility
   };
 
   useEffect(() => {
@@ -51,11 +59,11 @@ export default function App() {
 
   const handleOpenModal = (task) => {
     setSelectedTask(task); // Set the selected task
-    setIsModalOpen(true); // Open the modal
+    setEditModalOpen(true); // Open the modal
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Close the modal
+    setEditModalOpen(false); // Close the modal
   };
 
   const handleSaveTask = (updatedTask) => {
@@ -122,8 +130,8 @@ export default function App() {
 
         {/* Task Edit Modal */}
         <TaskEditModal
-          task={task}
-          isOpen={isModalOpen}
+          task={selectedTask}
+          isOpen={editModalOpen}
           onClose={handleCloseModal}
           onSave={handleSaveTask}
         />
