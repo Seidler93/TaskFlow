@@ -2,24 +2,16 @@ import { useState, useEffect } from "react";
 import { useAppContext } from "../context/AppContext";
 import { updateTask } from "../../firebase";
 
-const TaskEditModal = ({ isOpen, onClose }) => {
-  const { selectedTask } = useAppContext();
+const TaskEditModal = () => {
+  const { selectedTask, editModalOpen, setEditModalOpen } = useAppContext();
   const [editedTask, setEditedTask] = useState(null); // Set to null initially
   const [loading, setLoading] = useState(true); // Track loading state
-
-  // Function to format Firebase timestamp to yyyy-MM-dd
-  const formatDate = (timestamp) => {
-    if (!timestamp) return "";
-    const date = new Date(timestamp.seconds * 1000);
-    return date.toISOString().split("T")[0]; // Return the date in yyyy-MM-dd format
-  };
 
   // Update the modal state when selectedTask is available
   useEffect(() => {
     if (selectedTask) {
       setEditedTask({
-        ...selectedTask,
-        dueDate: formatDate(selectedTask.dueDate), // Format the date before setting state
+        ...selectedTask, // Format the date before setting state
       });
       setLoading(false); // Mark loading as false once task is set
     }
@@ -35,23 +27,20 @@ const TaskEditModal = ({ isOpen, onClose }) => {
 
   const handleSave = () => {
     if (editedTask) {
-      // Convert dueDate back to a date object before saving to Firestore
-      const formattedDate = new Date(editedTask.dueDate);
       updateTask(editedTask.id, {
         ...editedTask,
-        dueDate: formattedDate,
         ...(editedTask.recurrence ? { recurrence: { frequency: editedTask.recurrence, interval: 1 } } : {})
       });      
-      onClose();
+      setEditModalOpen(false);
     }
   };
 
-  if (!isOpen) return null; // Don't show modal if it's closed
+  if (!editModalOpen) return null; // Don't show modal if it's closed
 
   // Show a loading state if the task is being fetched
   if (loading) {
     return (
-      <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-overlay" onClick={() => setEditModalOpen(false)}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <h2>Loading...</h2>
           <p>Fetching task data...</p>
@@ -61,7 +50,7 @@ const TaskEditModal = ({ isOpen, onClose }) => {
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={() => setEditModalOpen(false)}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <h2>Edit Task</h2>
 
@@ -123,7 +112,7 @@ const TaskEditModal = ({ isOpen, onClose }) => {
         </div>
 
         <div className="modal-actions">
-          <button className="cancel-btn" onClick={onClose}>
+          <button className="cancel-btn" onClick={() => setEditModalOpen(false)}>
             Cancel
           </button>
           <button className="save-btn" onClick={handleSave}>

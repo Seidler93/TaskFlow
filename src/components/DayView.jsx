@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useDroppable } from "@dnd-kit/core";
-import AddTask from "./AddTask";
 import TaskCard from "./TaskCard";
+import { useAppContext } from "../context/AppContext";
+import DayViewNavigation from "./DayViewNavigation";
+import { updateAllTaskDueDates } from "../../firebase";
 
 export default function DayView({
   tasks,
@@ -21,10 +22,9 @@ export default function DayView({
   openMenu,
   menuRef,
   deleteTask,
-  projectId
 }) {
-  // Create state for the current displayed day
-  const [day, setDay] = useState(new Date());  // Initializes to today's date
+
+  const { addTaskModalOpen, setAddTaskModalOpen, selectedDate, openTaskModal, day, setDay } = useAppContext();
 
   useEffect(() => {
     // console.log("Updated tasks:", tasks);
@@ -33,78 +33,51 @@ export default function DayView({
   
   // Filter tasks for the selected day
   const tasksForDay = tasks.filter((task) => {
-    const taskDate = new Date(task.dueDate.seconds * 1000); // Assuming task.dueDate is a Firestore timestamp
-    return taskDate.toDateString() === day.toDateString(); // Compare only the date part
+    // Assuming task.dueDate is already in "yyyy-MM-dd" format
+    const taskDate = task.dueDate; // No need to convert the date if it's already in the correct format
+    const formattedDay = day.toISOString().split('T')[0]; // Convert day to "yyyy-MM-dd" format
+    
+    return taskDate === formattedDay; // Compare the two date strings
   });
-
-  const { setNodeRef, isOver } = useDroppable({
-    id: day.toDateString(),
-  });
-
-  // Change the day to the previous day
-  const goToPreviousDay = () => {
-    const previousDay = new Date(day);
-    previousDay.setDate(previousDay.getDate() - 1); // Decrease by one day
-    setDay(previousDay);
-  };
-
-  // Change the day to the next day
-  const goToNextDay = () => {
-    const nextDay = new Date(day);
-    nextDay.setDate(nextDay.getDate() + 1); // Increase by one day
-    setDay(nextDay);
-  };
-
-  // Set the day to today
-  const goToToday = () => {
-    setDay(new Date());  // Set to current date
-  };
+  
 
   return (
     <div className="week-day-container">
-      {/* Buttons to change day */}
-      <h3>{day.toDateString()}</h3>
-      <div className="day-navigation">
-        <button onClick={goToPreviousDay}>← Previous Day</button>
-        <button onClick={goToToday}>Today</button> {/* Today Button */}
-        <button onClick={goToNextDay}>Next Day →</button>
+      <div className="day-view-nav-container">
+        <h3>{day.toDateString()}</h3>
+        {/* Buttons to change day */}
+        <DayViewNavigation/>
       </div>
-
-      <div
-        className={`week-day ${isOver ? "droppable-over" : ""}`}
-        ref={setNodeRef}
-      >
-        <div className="day-tasks">
-          {tasksForDay.length > 0 ? (
-            tasksForDay.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                day={day}
-                setTasks={setTasks}
-                hiddenDescriptions={hiddenDescriptions}
-                toggleDescription={toggleDescription}
-                hideCompleted={hideCompleted}
-                editingTaskId={editingTaskId}
-                editedTitle={editedTitle}
-                setEditedTitle={setEditedTitle}
-                handleEditTask={handleEditTask}
-                handleSaveTask={handleSaveTask}
-                handleCancelEdit={handleCancelEdit}
-                toggleTaskStatus={toggleTaskStatus}
-                toggleRecurringTaskForDate={toggleRecurringTaskForDate}
-                toggleMenu={toggleMenu}
-                openMenu={openMenu}
-                menuRef={menuRef}
-                deleteTask={deleteTask}
-              />
-            ))
-          ) : (
-            <p className="no-task">No tasks</p>
-          )}
-        </div>
-
-        <AddTask projectId={projectId} date={day} />
+      <div className="day-tasks">
+        {tasksForDay.length > 0 ? (
+          tasksForDay.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              setTasks={setTasks}
+              hiddenDescriptions={hiddenDescriptions}
+              toggleDescription={toggleDescription}
+              hideCompleted={hideCompleted}
+              editingTaskId={editingTaskId}
+              editedTitle={editedTitle}
+              setEditedTitle={setEditedTitle}
+              handleEditTask={handleEditTask}
+              handleSaveTask={handleSaveTask}
+              handleCancelEdit={handleCancelEdit}
+              toggleTaskStatus={toggleTaskStatus}
+              toggleRecurringTaskForDate={toggleRecurringTaskForDate}
+              toggleMenu={toggleMenu}
+              openMenu={openMenu}
+              menuRef={menuRef}
+              deleteTask={deleteTask}
+            />
+          ))
+        ) : (
+          <p className="no-task">No tasks</p>
+        )}
+      </div>
+      <div className="add-task-container">
+        <button className="add-task-btn" onClick={() => openTaskModal(day)}>+</button>
       </div>
     </div>
   );

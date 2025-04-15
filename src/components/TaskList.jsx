@@ -10,7 +10,7 @@ import { collection, query, where, onSnapshot, updateDoc, doc, orderBy } from "f
 import WeekView from "./WeekView";
 import MonthView from "./MonthView";
 import DayView from "./DayView";
-
+import { useAppContext } from "../context/AppContext";
 
 const getWeekDays = (offset = 0) => {
   const today = new Date();
@@ -37,14 +37,15 @@ const formatDate = (date) => {
   return `${month} ${day}, ${year}`;
 };
 
-export default function TaskList({ projectId, taskView, refreshTrigger, weekOffset = 0 }) {
+export default function TaskList({ projectId }) {
   const [tasks, setTasks] = useState([]);
   const [openMenu, setOpenMenu] = useState(null);
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editedTitle, setEditedTitle] = useState("");
   const menuRef = useRef(null);
-  const [hideCompleted, setHideCompleted] = useState(false);
   const [hiddenDescriptions, setHiddenDescriptions] = useState([]);
+
+  const { taskView, editModalOpen, setEditModalOpen, hideCompleted, setHideCompleted, selectedTask, setSelectedTask, addTaskModalOpen, setAddTaskModalOpen } = useAppContext();
 
 
   const toggleDescription = (taskId) => {
@@ -102,24 +103,11 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
     });
     return () => unsubscribe();
   }, [projectId]);
-
-  const toggleTaskStatus = async (taskId, currentStatus) => {
-    const newStatus = currentStatus === "pending" ? "completed" : "pending";
-    await updateTaskStatus(taskId, newStatus);
-    
-  };
   
   const toggleMenu = (taskId) => {
     setOpenMenu(openMenu === taskId ? null : taskId);
   };
 
-  const handleTaskDateUpdate  = async (taskId, newDate) => {
-    await updateTaskDate(taskId, newDate);
-  };
-
-  const getTodayDate = () => {
-    return new Date();
-  };
   
   const getTasksForDate = (date) => {
     return tasks
@@ -157,7 +145,7 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
 
   return (
     <div className="task-list">
-      <div className="flex items-center gap-2 mb-2">
+      <div className="hide-completed5">
         <input
           type="checkbox"
           id="hideCompleted"
@@ -171,25 +159,14 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
         <WeekView
           tasks={tasks}
           setTasks={setTasks}
-          weekOffset={weekOffset}
           hiddenDescriptions={hiddenDescriptions}
           toggleDescription={toggleDescription}
-          hideCompleted={hideCompleted}
-          editingTaskId={editingTaskId}
-          editedTitle={editedTitle}
-          setEditedTitle={setEditedTitle}
-          handleEditTask={handleEditTask}
-          handleSaveTask={handleSaveTask}
-          handleCancelEdit={handleCancelEdit}
-          toggleTaskStatus={toggleTaskStatus}
           toggleRecurringTaskForDate={toggleRecurringTaskForDate}
           toggleMenu={toggleMenu}
           openMenu={openMenu}
           menuRef={menuRef}
-          handleTaskDateUpdate={handleTaskDateUpdate}
           getTasksForDate={getTasksForDate}
           getWeekDays={getWeekDays}
-          deleteTask={deleteTask}
           projectId={projectId}
         />
       )}
@@ -209,7 +186,6 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
           handleEditTask={handleEditTask}
           handleSaveTask={handleSaveTask}
           handleCancelEdit={handleCancelEdit}
-          toggleTaskStatus={toggleTaskStatus}
           toggleRecurringTaskForDate={toggleRecurringTaskForDate}
           toggleMenu={toggleMenu}
           openMenu={openMenu}
@@ -224,7 +200,6 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
           tasks={tasks}
           setTasks={setTasks}
           getTasksForDate={getTasksForDate}
-          handleTaskDateUpdate={handleTaskDateUpdate}
           hiddenDescriptions={hiddenDescriptions}
           toggleDescription={toggleDescription}
           hideCompleted={hideCompleted}
@@ -234,14 +209,12 @@ export default function TaskList({ projectId, taskView, refreshTrigger, weekOffs
           handleEditTask={handleEditTask}
           handleSaveTask={handleSaveTask}
           handleCancelEdit={handleCancelEdit}
-          toggleTaskStatus={toggleTaskStatus}
           toggleRecurringTaskForDate={toggleRecurringTaskForDate}
           toggleMenu={toggleMenu}
           openMenu={openMenu}
           menuRef={menuRef}
           deleteTask={deleteTask}
           projectId={projectId}
-          day={getTodayDate()}
         />
       )}
 

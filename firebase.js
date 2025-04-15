@@ -28,6 +28,9 @@ export const addTask = async (projectId, title, dueDate, recurrence = null, desc
       description,
     };
 
+    console.log(taskData);
+    
+
     if (recurrence) {
       taskData.recurrence = recurrence;
     }
@@ -137,3 +140,34 @@ export const updateTask = async (taskId, updatedFields) => {
   }
 };
 
+export const toggleTaskStatus = async (taskId, currentStatus) => {
+  const newStatus = currentStatus === "pending" ? "completed" : "pending";
+  await updateTaskStatus(taskId, newStatus);
+};
+
+export const updateAllTaskDueDates = async () => {
+  try {
+    const tasksQuery = query(collection(db, "tasks"));
+    const querySnapshot = await getDocs(tasksQuery);
+
+    // Loop through each task and update its dueDate
+    querySnapshot.forEach(async (taskDoc) => {
+      const task = taskDoc.data();
+      const taskId = taskDoc.id;
+
+      if (task.dueDate) {
+        // If the dueDate exists, convert it to the new format
+        const formattedDate = new Date(task.dueDate.seconds * 1000).toISOString().split("T")[0];
+
+        // Update the task's dueDate field
+        await updateDoc(doc(db, "tasks", taskId), {
+          dueDate: formattedDate,
+        });
+
+        console.log(`Updated task ${taskId} dueDate to ${formattedDate}`);
+      }
+    });
+  } catch (error) {
+    console.error("Error updating task due dates:", error);
+  }
+};

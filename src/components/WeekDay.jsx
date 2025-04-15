@@ -8,19 +8,10 @@ export default function WeekDay({
   setTasks,
   hiddenDescriptions,
   toggleDescription,
-  hideCompleted,
-  editingTaskId,
-  editedTitle,
-  setEditedTitle,
-  handleEditTask,
-  handleSaveTask,
-  handleCancelEdit,
-  toggleTaskStatus,
   toggleRecurringTaskForDate,
   toggleMenu,
   openMenu,
   menuRef,
-  deleteTask,
   projectId
 }) {
   const { setNodeRef, isOver } = useDroppable({
@@ -40,23 +31,13 @@ export default function WeekDay({
             <TaskCard
               key={task.id}
               task={task}
-              day={day}
               setTasks={setTasks}
               hiddenDescriptions={hiddenDescriptions}
               toggleDescription={toggleDescription}
-              hideCompleted={hideCompleted}
-              editingTaskId={editingTaskId}
-              editedTitle={editedTitle}
-              setEditedTitle={setEditedTitle}
-              handleEditTask={handleEditTask}
-              handleSaveTask={handleSaveTask}
-              handleCancelEdit={handleCancelEdit}
-              toggleTaskStatus={toggleTaskStatus}
               toggleRecurringTaskForDate={toggleRecurringTaskForDate}
               toggleMenu={toggleMenu}
               openMenu={openMenu}
               menuRef={menuRef}
-              deleteTask={deleteTask}
             />
           ))
         ) : (

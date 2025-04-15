@@ -1,74 +1,104 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { addTask } from "../../firebase";
+import { useAppContext } from "../context/AppContext";
 
-export default function AddTask({ projectId, date }) {
-  const [title, setTitle] = useState("");
-  const [isAdding, setIsAdding] = useState(false);
-  const [recurrence, setRecurrence] = useState("");
-  const [description, setDescription] = useState("");
+const AddTaskModal = () => {
+  const { addTaskModalOpen, setAddTaskModalOpen, selectedProject } = useAppContext();
+  const [newTask, setNewTask] = useState({
+    title: "",
+    description: "",
+    dueDate: new Date().toISOString().split("T")[0], // Set today's date as default
+    recurrence: "",
+  });
+  
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!title.trim()) return;
-    await addTask(projectId, title, date, recurrence ? { frequency: recurrence, interval: 1 } : null, description);
-    setTitle("");
-    setIsAdding(false);
-    setDescription("");
+  const handleSubmit = async () => {
+    if (!newTask.title.trim()) return;
+    await addTask(selectedProject, newTask.title, newTask.dueDate, newTask.recurrence ? { frequency: newTask.recurrence, interval: 1 } : null, newTask.description);
+    // Reset the form after saving
+    setNewTask({
+      title: "",
+      description: "",
+      dueDate: new Date().toISOString().split("T")[0], // Reset to today's date
+      recurrence: "",
+    });
+    setAddTaskModalOpen(false); // Close the modal after submission
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;    
+    setNewTask((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  if (!addTaskModalOpen) return null; // Do not render the modal if it is not open
+
   return (
-    <div className="add-task-container">
-      {!isAdding ? (
-        <button
-          onClick={() => setIsAdding(true)}
-          className="flex items-center text-gray-500 hover:text-black add-task"
-        >
-          <span className="text-red-500 mr-1 text-xl">+</span> Add task
-        </button>
-      ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2 mt-2">
-          <input
-            type="text"
-            className="border p-2 rounded w-full"
-            placeholder="New task..."
-            value={title}
-            autoFocus
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <textarea
-            className="border p-2 rounded w-full"
-            placeholder="Add a note or description (optional)"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <select
-            className="border p-2 rounded"
-            value={recurrence}
-            onChange={(e) => setRecurrence(e.target.value)}
-          >
-            <option value="">Does not repeat</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-          <div className="flex gap-2">
-            <button type="submit" className="px-4 py-1 bg-blue-500 text-white rounded">
+    <div className="modal-overlay" onClick={() => setAddTaskModalOpen(false)}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <h2>Add New Task</h2>
+
+        <div className="modal-form">
+          <label>
+            Title:
+            <input
+              type="text"
+              name="title"
+              placeholder="New task..."
+              value={newTask.title}
+              autoFocus
+              onChange={handleChange}
+            />
+          </label>
+
+          <label>
+            Description:
+            <textarea
+              name="description"
+              placeholder="Add a note or description (optional)"
+              value={newTask.description}
+              onChange={handleChange}
+            />
+          </label>
+
+          <label>
+            Due Date:
+            <input
+              type="date"
+              name="dueDate"
+              value={newTask.dueDate}
+              onChange={handleChange}
+            />
+          </label>
+
+          <label>
+            Recurrence:
+            <select
+              name="recurrence"
+              value={newTask.recurrence}
+              onChange={handleChange}
+            >
+              <option value="">None</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </label>
+
+          <div className="modal-actions">
+            <button className="save-btn" onClick={() => handleSubmit()} type="submit">
               Add
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                setTitle("");
-                setIsAdding(false);
-                setDescription("");
-              }}
-              className="px-4 py-1 bg-gray-300 rounded"
-            >
+            <button className="cancel-btn" onClick={() => setAddTaskModalOpen(false)}>
               Cancel
             </button>
           </div>
-        </form>
-      )}
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default AddTaskModal;

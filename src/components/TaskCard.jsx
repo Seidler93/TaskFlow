@@ -1,22 +1,24 @@
 import { useDraggable } from "@dnd-kit/core";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
+import { toggleTaskStatus, deleteTask } from "../../firebase";
 
 export default function TaskCard({
   task,
-  day,
   setTasks,
-  hiddenDescriptions,
-  toggleDescription,
-  toggleTaskStatus,
   toggleRecurringTaskForDate,
   toggleMenu,
   openMenu,
   menuRef,
-  deleteTask,
 }) {
 
-  const { openEditModal, editModalOpen, setEditModalOpen, selectedTask, setSelectedTask } = useAppContext();
+  const [hiddenDescriptions, setHiddenDescriptions,] = useState(true); 
+  
+  const toggleDescription = () => {
+    setHiddenDescriptions(prev => !prev);
+  };
+  
+  const { openEditModal, hideCompleted, editModalOpen, setEditModalOpen, selectedTask, setSelectedTask, setAddTaskModalOpen, day } = useAppContext();
 
   const { attributes, listeners, setNodeRef } = useDraggable({
     id: task.id,
@@ -29,7 +31,7 @@ export default function TaskCard({
 
   return (
     <div
-      className={`task-card ${task.status === "completed" ? "completed" : ""}`}
+      className={`task-card ${task.status === "completed" ? "completed" : ""} ${hideCompleted ? "hide-completed" : ""}`}
       ref={setNodeRef}
       {...listeners}
       {...attributes}
@@ -38,7 +40,7 @@ export default function TaskCard({
           toggleDescription(task.id);
         }
       }}
-      onDoubleClick={() => openEditModal(task)} // Trigger the modal open
+      onDoubleClick={() => openEditModal(task)} 
     >
       <div className="task-header">
         <div className="task-status">
@@ -78,7 +80,7 @@ export default function TaskCard({
           </button>
           {openMenu === task.id && (
             <div className="menu-dropdown" ref={menuRef}>
-              <button onClick={() => handleOpenModal()}>✏️ Edit</button>
+              <button onClick={() => openEditModal(task)}>✏️ Edit</button>
               <button
                 onClick={async () => {
                   await deleteTask(task.id);
@@ -92,14 +94,14 @@ export default function TaskCard({
         </div>
       </div>
 
-      {Array.isArray(hiddenDescriptions) && !hiddenDescriptions.includes(task.id) && task.description && (
-        <p
-          className={`task-description text-gray-500 text-sm mt-2 px-2 pb-2 ${
-            task.status === "completed" ? "completed-task" : ""}`}
-        >
-          {task.description}
-        </p>
-      )}
+      <p
+        className={`task-description 
+          ${task.status === "completed" ? "completed-task" : ""}
+          ${hiddenDescriptions ? "hidden" : ""}`}
+      >
+        {task.description}
+      </p>
+
     </div>
   );
 }

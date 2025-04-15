@@ -16,11 +16,11 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { getMonthDays } from "../utils/dateUtils";
 import MonthDayCell from "./MonthDayCell";
+import { toggleTaskStatus } from "../../firebase";
 
 export default function MonthView({
   tasks,
   getTasksForDate,
-  toggleTaskStatus,
   handleTaskDateUpdate,
   projectId
 }) {

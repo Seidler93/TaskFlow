@@ -5,15 +5,24 @@ const AppContext = createContext();
 
 // Create a Provider component
 export const AppProvider = ({ children }) => {
+  // Check localStorage for the selected project ID and name on component mount
+  const storedProjectId = localStorage.getItem("selectedProjectId");
+  const storedProjectName = localStorage.getItem("selectedProjectName");
+
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [selectedProjectName, setSelectedProjectName] = useState("");
+  const [selectedProject, setSelectedProject] = useState(storedProjectId || null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedProjectName, setSelectedProjectName] = useState(storedProjectName || "");
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [hideCompleted, setHideCompleted] = useState(false);
+  const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  
+  const [taskView, setTaskView] = useState("day");
+  const [weekOffset, setWeekOffset] = useState(0);  
+  const [day, setDay] = useState(new Date()); 
 
-  
+
 
   // Fetch projects from your data source (e.g., Firebase)
   useEffect(() => {
@@ -57,6 +66,11 @@ export const AppProvider = ({ children }) => {
     setEditModalOpen(true);
   };
 
+  const openTaskModal = (date) => {
+    setSelectedDate(date);
+    setAddTaskModalOpen(true);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -67,7 +81,14 @@ export const AppProvider = ({ children }) => {
         handleSelectProject,
         selectedTask, setSelectedTask,
         editModalOpen, setEditModalOpen,
-        openEditModal
+        openEditModal, 
+        addTaskModalOpen, setAddTaskModalOpen,
+        selectedDate, setSelectedDate, 
+        openTaskModal, 
+        taskView, setTaskView, 
+        weekOffset, setWeekOffset,
+        day, setDay, 
+        hideCompleted, setHideCompleted
       }}
     >
       {children}

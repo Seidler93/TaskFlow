@@ -2,6 +2,7 @@ import { DndContext, useSensor, useSensors, PointerSensor, DragOverlay } from "@
 import { useState } from "react";
 import WeekDay from "./WeekDay";
 import toast from "react-hot-toast";
+import { toggleTaskStatus, updateTask } from "../../firebase";
 
 export default function WeekView({
   tasks,
@@ -9,19 +10,10 @@ export default function WeekView({
   weekOffset,
   hiddenDescriptions,
   toggleDescription,
-  hideCompleted,
-  editingTaskId,
-  editedTitle,
-  setEditedTitle,
-  handleEditTask,
-  handleSaveTask,
-  handleCancelEdit,
-  toggleTaskStatus,
   toggleRecurringTaskForDate,
   toggleMenu,
   openMenu,
   menuRef,
-  handleTaskDateUpdate,
   getTasksForDate,
   getWeekDays,
   deleteTask,
@@ -53,14 +45,14 @@ export default function WeekView({
           // Save original date
           const previousDate = currentDate;
   
-          handleTaskDateUpdate(draggedTask.id, newDate);
+          updateTask(draggedTask.id, newDate);
   
           toast((t) => (
             <span>
               Task moved to {newDate.toDateString()}
               <button
                 onClick={() => {
-                  handleTaskDateUpdate(draggedTask.id, previousDate);
+                  updateTask(draggedTask.id, previousDate);
                   toast.dismiss(t.id);
                 }}
                 style={{
@@ -79,7 +71,6 @@ export default function WeekView({
     }
   };
   
-
   const handleDragStart = ({ active }) => {
     const task = tasks.find((t) => t.id === active.id);
     if (task) setDraggedTask(task);
@@ -100,14 +91,6 @@ export default function WeekView({
             setTasks={setTasks}
             hiddenDescriptions={hiddenDescriptions}
             toggleDescription={toggleDescription}
-            hideCompleted={hideCompleted}
-            editingTaskId={editingTaskId}
-            editedTitle={editedTitle}
-            setEditedTitle={setEditedTitle}
-            handleEditTask={handleEditTask}
-            handleSaveTask={handleSaveTask}
-            handleCancelEdit={handleCancelEdit}
-            toggleTaskStatus={toggleTaskStatus}
             toggleRecurringTaskForDate={toggleRecurringTaskForDate}
             toggleMenu={toggleMenu}
             openMenu={openMenu}
